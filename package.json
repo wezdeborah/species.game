@@ -1,0 +1,26 @@
+{
+  "devDependencies": {
+    "tailwindcss": "^4.1.17"
+  },
+  "dependencies": {
+    "lucide-react": "^0.555.0"
+  },
+  "name": "species.game",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wezdeborah/species.game.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/wezdeborah/species.game/issues"
+  },
+  "homepage": "https://github.com/wezdeborah/species.game#readme",
+  "description": ""
+}
