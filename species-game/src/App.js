@@ -429,7 +429,7 @@ export default function SpeciesGameUI() {
   ];
 
   return (
-    <div className="flex h-screen bg-neutral-900 text-white relative">
+    <div className="flex h-screen w-full bg-neutral-900 text-white relative overflow-hidden m-0 p-0 gap-0">
       {/* Organism Card Modal */}
       {selectedOrganism && (
         <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -559,7 +559,7 @@ export default function SpeciesGameUI() {
       )}
 
       {/* Left Panel */}
-      <div className="w-2/5 p-8 flex flex-col overflow-hidden">
+      <div className="w-2/6 p-6 flex flex-col overflow-hidden">
         {/* Scrollable Content Area */}
         <div className="flex-1 overflow-y-auto pr-2 pb-4">
           {/* Species Section */}
@@ -728,7 +728,7 @@ export default function SpeciesGameUI() {
       </div>
 
       {/* Right Panel */}
-      <div className="w-3/5 bg-neutral-200 flex items-center justify-center">
+      <div className="w-4/6 bg-neutral-200 flex items-center justify-center">
         <div ref={p5ContainerRef} className="w-full h-full"></div>
       </div>
     </div>
