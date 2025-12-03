@@ -559,7 +559,7 @@ export default function SpeciesGameUI() {
       )}
 
       {/* Left Panel */}
-      <div className="w-1/2 p-8 flex flex-col overflow-hidden">
+      <div className="w-2/5 p-8 flex flex-col overflow-hidden">
         {/* Scrollable Content Area */}
         <div className="flex-1 overflow-y-auto pr-2 pb-4">
           {/* Species Section */}
@@ -728,7 +728,7 @@ export default function SpeciesGameUI() {
       </div>
 
       {/* Right Panel */}
-      <div className="w-1/2 bg-neutral-200 flex items-center justify-center">
+      <div className="w-3/5 bg-neutral-200 flex items-center justify-center">
         <div ref={p5ContainerRef} className="w-full h-full"></div>
       </div>
     </div>
