@@ -503,23 +503,35 @@ export default function SpeciesGameUI() {
   ];
 
   const organisms = [
-    { name: 'Bacillus', type: 'Bacteria', description: 'Soil-dwelling bacteria that form endospores for survival.' },
-    { name: 'Streptomyces', type: 'Bacteria', description: 'Antibiotic-producing bacteria found in soil.' },
-    { name: 'Acidobacteriota', type: 'Bacteria', description: 'Acidophilic bacteria thriving in low pH environments.' },
-    { name: 'Pseudomonas', type: 'Bacteria', description: 'Versatile bacteria with diverse metabolic capabilities.' },
-    { name: 'Rhizobium', type: 'Bacteria', description: 'Nitrogen-fixing bacteria forming symbiosis with legumes.' },
-    { name: 'Agaricales', type: 'Fungi', description: 'Order of mushroom-forming fungi including edible species.' },
-    { name: 'Eisenia', type: 'Worm', description: 'Earthworm genus important for soil aeration and decomposition.' },
-    { name: 'Fetida', type: 'Worm', description: 'Composting worms that break down organic matter.' },
-    { name: 'Collembola', type: 'Arthropod', description: 'Springtails that help decompose organic material.' },
-    { name: 'Hypnales', type: 'Moss', description: 'Order of pleurocarpous mosses growing in mats.' },
-    { name: 'Polypodiopsida', type: 'Fern', description: 'Class of true ferns with diverse species.' },
-    { name: 'Asparagus', type: 'Plant', description: 'Perennial flowering plant used as a vegetable.' },
-    { 
-      name: 'Procris repens', 
-      type: 'Plant', 
-      description: 'Creeping herbaceous plant found in tropical regions.',
-      image: 'https://iili.io/fzISRPp.png'
+    {
+      name: 'Acidobacteriota',
+      type: 'Bacteria',
+      description: 'Acidophilic bacteria thriving in low pH environments.',
+      image: '/cards/acidobacteriota.png'
+    },
+    {
+      name: 'Agaricales',
+      type: 'Fungi',
+      description: 'Order of mushroom-forming fungi including edible species.',
+      image: '/cards/agaricales.png'
+    },
+    {
+      name: 'Asparagus',
+      type: 'Plant',
+      description: 'Perennial flowering plant used as a vegetable.',
+      image: '/cards/asparagus.png'
+    },
+    {
+      name: 'Bacillus',
+      type: 'Bacteria',
+      description: 'Soil-dwelling bacteria that form endospores for survival.',
+      image: '/cards/bacillus.png'
+    },
+    {
+      name: 'Collembola',
+      type: 'Arthropod',
+      description: 'Springtails that help decompose organic material.',
+      image: '/cards/collembola.png'
     }
   ];
 
@@ -766,16 +778,28 @@ export default function SpeciesGameUI() {
           </div>
 
           {activeTab === 'species-cards' && (
-            <div className="mb-8 overflow-y-auto max-h-96">
-              <div className="grid grid-cols-3 gap-2">
+            <div className="mb-8 overflow-x-auto">
+              <div className="flex items-center justify-center gap-4">
                 {organisms.map((org, i) => (
                   <button
                     key={i}
                     onClick={() => setSelectedOrganism(org)}
-                    className="bg-neutral-800 hover:bg-neutral-700 px-3 py-2 rounded text-sm text-left transition-colors border border-neutral-700 hover:border-neutral-600"
+                    className="flex-shrink-0 bg-neutral-800 hover:bg-neutral-700 rounded-lg overflow-hidden transition-colors border border-neutral-700 hover:border-neutral-500"
+                    style={{ height: '300px', width: 'auto' }}
                   >
-                    <div className="font-medium">{org.name}</div>
-                    <div className="text-xs text-neutral-500">{org.type}</div>
+                    {org.image ? (
+                      <img
+                        src={org.image}
+                        alt={org.name}
+                        className="h-full w-auto object-contain"
+                        style={{ height: '300px' }}
+                      />
+                    ) : (
+                      <div className="h-full w-40 flex flex-col items-center justify-center p-4">
+                        <div className="font-medium text-center">{org.name}</div>
+                        <div className="text-xs text-neutral-500 mt-1">{org.type}</div>
+                      </div>
+                    )}
                   </button>
                 ))}
               </div>
