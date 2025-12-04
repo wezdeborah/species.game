@@ -19,8 +19,8 @@ export default function SpeciesGameUI() {
 
   // Adafruit IO feed data state
   const [feedData, setFeedData] = useState({
-    temperature: { value: null, lastUpdated: null, loading: true, error: null },
-    humidity: { value: null, lastUpdated: null, loading: true, error: null },
+    temperature: { value: null, history: [], lastUpdated: null, loading: true, error: null },
+    humidity: { value: null, history: [], lastUpdated: null, loading: true, error: null },
     'soil-moisture': { value: null, lastUpdated: null, loading: true, error: null }
   });
 
@@ -409,9 +409,13 @@ export default function SpeciesGameUI() {
 
   // Fetch Adafruit IO feed data
   useEffect(() => {
-    const feedKeys = ['temperature', 'humidity', 'soil-moisture'];
+    const feedConfigs = [
+      { key: 'temperature', limit: 15 },
+      { key: 'humidity', limit: 15 },
+      { key: 'soil-moisture', limit: 1 }
+    ];
 
-    const fetchFeedData = async (feedKey) => {
+    const fetchFeedData = async (feedKey, limit) => {
       try {
         const headers = {};
         if (ADAFRUIT_IO_KEY) {
@@ -419,7 +423,7 @@ export default function SpeciesGameUI() {
         }
 
         const response = await fetch(
-          `${ADAFRUIT_IO_URL}/${ADAFRUIT_USERNAME}/feeds/${feedKey}/data?limit=1`,
+          `${ADAFRUIT_IO_URL}/${ADAFRUIT_USERNAME}/feeds/${feedKey}/data?limit=${limit}`,
           { headers }
         );
 
@@ -433,17 +437,33 @@ export default function SpeciesGameUI() {
           throw new Error(`No data available for ${feedKey}`);
         }
 
-        const data = dataArray[0];
+        const latestData = dataArray[0];
 
-        setFeedData(prev => ({
-          ...prev,
-          [feedKey]: {
-            value: parseFloat(data.value),
-            lastUpdated: new Date(data.created_at),
-            loading: false,
-            error: null
-          }
-        }));
+        if (limit > 1) {
+          // For temperature and humidity, store history (reverse to show oldest first)
+          const history = dataArray.map(d => parseFloat(d.value)).reverse();
+          setFeedData(prev => ({
+            ...prev,
+            [feedKey]: {
+              value: parseFloat(latestData.value),
+              history: history,
+              lastUpdated: new Date(latestData.created_at),
+              loading: false,
+              error: null
+            }
+          }));
+        } else {
+          // For soil-moisture, just store the single value
+          setFeedData(prev => ({
+            ...prev,
+            [feedKey]: {
+              value: parseFloat(latestData.value),
+              lastUpdated: new Date(latestData.created_at),
+              loading: false,
+              error: null
+            }
+          }));
+        }
       } catch (error) {
         console.error(`Error fetching ${feedKey}:`, error);
         setFeedData(prev => ({
@@ -458,7 +478,7 @@ export default function SpeciesGameUI() {
     };
 
     const fetchAllFeeds = () => {
-      feedKeys.forEach(feedKey => fetchFeedData(feedKey));
+      feedConfigs.forEach(({ key, limit }) => fetchFeedData(key, limit));
     };
 
     // Initial fetch
@@ -533,6 +553,49 @@ export default function SpeciesGameUI() {
   // Get current tab info
   const getCurrentTabInfo = () => {
     return liveDataTabs.find(tab => tab.id === activeLiveData) || liveDataTabs[0];
+  };
+
+  // Simple line graph component
+  const LineGraph = ({ data, color = '#6ef1f9' }) => {
+    if (!data || data.length === 0) return null;
+
+    const width = 280;
+    const height = 60;
+    const padding = 5;
+
+    const minVal = Math.min(...data);
+    const maxVal = Math.max(...data);
+    const range = maxVal - minVal || 1;
+
+    const points = data.map((val, i) => {
+      const x = padding + (i / (data.length - 1)) * (width - 2 * padding);
+      const y = height - padding - ((val - minVal) / range) * (height - 2 * padding);
+      return `${x},${y}`;
+    }).join(' ');
+
+    return (
+      <svg width={width} height={height} className="w-full">
+        <polyline
+          fill="none"
+          stroke={color}
+          strokeWidth="2"
+          points={points}
+        />
+        {data.map((val, i) => {
+          const x = padding + (i / (data.length - 1)) * (width - 2 * padding);
+          const y = height - padding - ((val - minVal) / range) * (height - 2 * padding);
+          return (
+            <circle
+              key={i}
+              cx={x}
+              cy={y}
+              r="3"
+              fill={color}
+            />
+          );
+        })}
+      </svg>
+    );
   };
 
   return (
@@ -837,7 +900,8 @@ export default function SpeciesGameUI() {
                 <span className="text-red-400 text-sm">Error loading data</span>
                 <span className="text-neutral-500 text-xs mt-1">{feedData[activeLiveData].error}</span>
               </div>
-            ) : (
+            ) : activeLiveData === 'soil-moisture' ? (
+              // Single value display for soil moisture
               <div className="h-full flex flex-col justify-between">
                 <div className="flex items-center justify-between">
                   <span className="text-neutral-400 text-sm">{getCurrentTabInfo().label}</span>
@@ -857,6 +921,31 @@ export default function SpeciesGameUI() {
                   <span className="text-neutral-500 text-xs">
                     Data from Adafruit IO - Auto-refreshes every 30s
                   </span>
+                </div>
+              </div>
+            ) : (
+              // Graph display for temperature and humidity
+              <div className="h-full flex flex-col justify-between">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-neutral-400 text-sm">{getCurrentTabInfo().label}</span>
+                    <span className="text-lg font-bold text-white">
+                      {feedData[activeLiveData]?.value?.toFixed(1) ?? '--'}{getCurrentTabInfo().unit}
+                    </span>
+                  </div>
+                  <span className="text-neutral-500 text-xs">
+                    {formatLastUpdated(feedData[activeLiveData]?.lastUpdated)}
+                  </span>
+                </div>
+                <div className="flex-1 flex items-center justify-center">
+                  <LineGraph
+                    data={feedData[activeLiveData]?.history}
+                    color={activeLiveData === 'temperature' ? '#f87171' : '#60a5fa'}
+                  />
+                </div>
+                <div className="flex items-center justify-between text-neutral-500 text-xs">
+                  <span>Last 15 readings</span>
+                  <span>Auto-refreshes every 30s</span>
                 </div>
               </div>
             )}
