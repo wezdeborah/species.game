@@ -504,10 +504,34 @@ export default function SpeciesGameUI() {
 
   const organisms = [
     {
+      name: 'Bacillus',
+      type: 'Bacteria',
+      description: 'Soil-dwelling bacteria that form endospores for survival.',
+      image: '/cards/bacillus.png'
+    },
+    {
+      name: 'Streptomyces',
+      type: 'Bacteria',
+      description: 'Antibiotic-producing bacteria found in soil.',
+      image: '/cards/streptomyces.png'
+    },
+    {
       name: 'Acidobacteriota',
       type: 'Bacteria',
       description: 'Acidophilic bacteria thriving in low pH environments.',
       image: '/cards/acidobacteriota.png'
+    },
+    {
+      name: 'Pseudomonas',
+      type: 'Bacteria',
+      description: 'Versatile bacteria with diverse metabolic capabilities.',
+      image: '/cards/pseudomonas.png'
+    },
+    {
+      name: 'Rhizobium',
+      type: 'Bacteria',
+      description: 'Nitrogen-fixing bacteria forming symbiosis with legumes.',
+      image: '/cards/rhizobium.png'
     },
     {
       name: 'Agaricales',
@@ -516,22 +540,40 @@ export default function SpeciesGameUI() {
       image: '/cards/agaricales.png'
     },
     {
-      name: 'Asparagus',
-      type: 'Plant',
-      description: 'Perennial flowering plant used as a vegetable.',
-      image: '/cards/asparagus.png'
-    },
-    {
-      name: 'Bacillus',
-      type: 'Bacteria',
-      description: 'Soil-dwelling bacteria that form endospores for survival.',
-      image: '/cards/bacillus.png'
+      name: 'Eisenia Fetida',
+      type: 'Worm',
+      description: 'Composting worms important for soil aeration and decomposition.',
+      image: '/cards/eisenia-fetida.png'
     },
     {
       name: 'Collembola',
       type: 'Arthropod',
       description: 'Springtails that help decompose organic material.',
       image: '/cards/collembola.png'
+    },
+    {
+      name: 'Hypnales',
+      type: 'Moss',
+      description: 'Order of pleurocarpous mosses growing in mats.',
+      image: '/cards/hypnales.png'
+    },
+    {
+      name: 'Polypodiopsida',
+      type: 'Fern',
+      description: 'Class of true ferns with diverse species.',
+      image: '/cards/polypodiopsida.png'
+    },
+    {
+      name: 'Asparagus',
+      type: 'Plant',
+      description: 'Perennial flowering plant used as a vegetable.',
+      image: '/cards/asparagus.png'
+    },
+    {
+      name: 'Procris repens',
+      type: 'Plant',
+      description: 'Creeping herbaceous plant found in tropical regions.',
+      image: '/cards/procris-repens.png'
     }
   ];
 
