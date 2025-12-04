@@ -9,9 +9,6 @@ const ADAFRUIT_IO_KEY = process.env.REACT_APP_ADAFRUIT_IO_KEY;
 export default function SpeciesGameUI() {
   const [activeTab, setActiveTab] = useState('species-cards');
   const [activeLiveData, setActiveLiveData] = useState('temperature');
-  const [pH, setPH] = useState(7);
-  const [temp, setTemp] = useState(20);
-  const [humi, setHumi] = useState(50);
   const [selectedSpecies, setSelectedSpecies] = useState(null);
   const [selectedOrganism, setSelectedOrganism] = useState(null);
   const p5ContainerRef = useRef(null);
@@ -489,11 +486,6 @@ export default function SpeciesGameUI() {
 
     return () => clearInterval(intervalId);
   }, []);
-  useEffect(() => {
-    if (p5InstanceRef.current && p5InstanceRef.current.updateEnvironment) {
-      p5InstanceRef.current.updateEnvironment(temp, humi, pH);
-    }
-  }, [pH, temp, humi]);
 
   const species = [
     { name: 'Bacteria', icon: '🦠', description: 'Microscopic organisms that play crucial roles in decomposition and nutrient cycling.' },
