@@ -7,7 +7,7 @@ const ADAFRUIT_IO_URL = 'https://io.adafruit.com/api/v2';
 const ADAFRUIT_IO_KEY = process.env.REACT_APP_ADAFRUIT_IO_KEY;
 
 export default function SpeciesGameUI() {
-  const [activeTab, setActiveTab] = useState('parameters');
+  const [activeTab, setActiveTab] = useState('species-cards');
   const [activeLiveData, setActiveLiveData] = useState('temperature');
   const [pH, setPH] = useState(7);
   const [temp, setTemp] = useState(20);
@@ -410,8 +410,8 @@ export default function SpeciesGameUI() {
   // Fetch Adafruit IO feed data
   useEffect(() => {
     const feedConfigs = [
-      { key: 'temperature', limit: 15 },
-      { key: 'humidity', limit: 15 },
+      { key: 'temperature', limit: 25 },
+      { key: 'humidity', limit: 25 },
       { key: 'soil-moisture', limit: 1 }
     ];
 
@@ -524,7 +524,6 @@ export default function SpeciesGameUI() {
   ];
 
   const tabs = [
-    { id: 'parameters', label: 'Parameters' },
     { id: 'species-cards', label: 'Species Cards' },
     { id: 'how-to-play', label: 'How to Play' }
   ];
@@ -766,74 +765,6 @@ export default function SpeciesGameUI() {
             ))}
           </div>
 
-          {/* Parameters Section */}
-          {activeTab === 'parameters' && (
-            <div className="border border-neutral-700 p-4 mb-6">
-              <div className="flex flex-col gap-8 items-centre h-48 overflow-hidden" >
-                {/* pH Bar */}
-                <div className="flex flex-row items-centre flex-1 gap-2">
-                  <span className="text-lg mb-2">pH</span>
-                  <div className="w-full bg-neutral-700 rounded relative flex-1">
-                    <div
-                      className="absolute bottom-0 w-full bg-neutral-300 rounded transition-all"
-                      style={{ height: `${(pH / 14) * 100}%` }}
-                    />
-                  </div>
-                  <input
-                    type="range"
-                    min="0"
-                    max="14"
-                    step="0.1"
-                    value={pH}
-                    onChange={(e) => setPH(parseFloat(e.target.value))}
-                    className="w-full mt-2"
-                  />
-                  <span className="text-sm mt-1">{pH.toFixed(1)}</span>
-                </div>
-
-                {/* Temperature Bar */}
-                <div className="flex flex-row items-center flex-1 gap-2">
-                  <span className="text-lg mb-2">Temp</span>
-                  <div className="w-full bg-neutral-700 rounded relative flex-1">
-                    <div
-                      className="absolute bottom-0 w-full bg-neutral-300 rounded transition-all"
-                      style={{ height: `${(temp / 50) * 100}%` }}
-                    />
-                  </div>
-                  <input
-                    type="range"
-                    min="0"
-                    max="50"
-                    value={temp}
-                    onChange={(e) => setTemp(parseInt(e.target.value))}
-                    className="w-full mt-2"
-                  />
-                  <span className="text-sm mt-1">{temp}°C</span>
-                </div>
-
-                {/* Humidity Bar */}
-                <div className="flex flex-row items-center flex-1 gap-2">
-                  <span className="text-lg mb-2">Humi</span>
-                  <div className="w-full bg-neutral-700 rounded relative flex-1">
-                    <div
-                      className="absolute bottom-0 w-full bg-neutral-300 rounded transition-all"
-                      style={{ height: `${humi}%` }}
-                    />
-                  </div>
-                  <input
-                    type="range"
-                    min="0"
-                    max="100"
-                    value={humi}
-                    onChange={(e) => setHumi(parseInt(e.target.value))}
-                    className="w-full mt-2"
-                  />
-                  <span className="text-sm mt-1">{humi}%</span>
-                </div>
-              </div>
-            </div>
-          )}
-
           {activeTab === 'species-cards' && (
             <div className="mb-8 overflow-y-auto max-h-96">
               <div className="grid grid-cols-3 gap-2">
@@ -944,7 +875,7 @@ export default function SpeciesGameUI() {
                   />
                 </div>
                 <div className="flex items-center justify-between text-neutral-500 text-xs">
-                  <span>Last 15 readings</span>
+                  <span>Last 25 readings</span>
                   <span>Auto-refreshes every 30s</span>
                 </div>
               </div>
