@@ -67,6 +67,16 @@ export default function SpeciesGameUI() {
             INSECTS: [253, 56, 6],
             PLANTS: [55, 245, 135]
           };
+
+          // Image variables
+          let bacteriaImg, fungiImg, insectsImg, plantsImg;
+
+          p.preload = () => {
+            bacteriaImg = p.loadImage('/cards/Bacteria.png');
+            fungiImg = p.loadImage('/cards/Fungi.png');
+            insectsImg = p.loadImage('/cards/Insects.png');
+            plantsImg = p.loadImage('/cards/Plants.png');
+          };
           
           class Creature {
             constructor(x, y, type) {
@@ -148,23 +158,28 @@ export default function SpeciesGameUI() {
               p.push();
               p.translate(this.x, this.y);
               p.rotate(this.angle);
-              
+
               let visualSize = this.size * (this.energy / 150);
               let alphaValue = p.map(this.energy, 0, 150, 100, 255);
-              
-              p.noStroke();
-              
+
+              p.imageMode(p.CENTER);
+              p.tint(255, alphaValue);
+
+              let img;
               if (this.type >= SPECIES.ACIDOBACTERIA && this.type <= SPECIES.STREPTOMYCES) {
-                p.fill(COLORS.BACTERIA[0], COLORS.BACTERIA[1], COLORS.BACTERIA[2], alphaValue);
+                img = bacteriaImg;
               } else if (this.type === SPECIES.AGARICALES) {
-                p.fill(COLORS.FUNGI[0], COLORS.FUNGI[1], COLORS.FUNGI[2], alphaValue);
+                img = fungiImg;
               } else if (this.type >= SPECIES.COLLEMBOLA && this.type <= SPECIES.EISENIA) {
-                p.fill(COLORS.INSECTS[0], COLORS.INSECTS[1], COLORS.INSECTS[2], alphaValue);
+                img = insectsImg;
               } else {
-                p.fill(COLORS.PLANTS[0], COLORS.PLANTS[1], COLORS.PLANTS[2], alphaValue);
+                img = plantsImg;
               }
-              
-              p.ellipse(0, 0, visualSize);
+
+              if (img) {
+                p.image(img, 0, 0, visualSize, visualSize);
+              }
+              p.noTint();
               p.pop();
             }
           }
