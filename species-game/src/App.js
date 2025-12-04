@@ -1,9 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ArrowUpRight } from 'lucide-react';
 
+// Adafruit IO Configuration
+const ADAFRUIT_USERNAME = 'justwezzie';
+const ADAFRUIT_IO_URL = 'https://io.adafruit.com/api/v2';
+const ADAFRUIT_IO_KEY = process.env.REACT_APP_ADAFRUIT_IO_KEY;
+
 export default function SpeciesGameUI() {
   const [activeTab, setActiveTab] = useState('parameters');
-  const [activeLiveData, setActiveLiveData] = useState('sound');
+  const [activeLiveData, setActiveLiveData] = useState('temperature');
   const [pH, setPH] = useState(7);
   const [temp, setTemp] = useState(20);
   const [humi, setHumi] = useState(50);
@@ -11,6 +16,13 @@ export default function SpeciesGameUI() {
   const [selectedOrganism, setSelectedOrganism] = useState(null);
   const p5ContainerRef = useRef(null);
   const p5InstanceRef = useRef(null);
+
+  // Adafruit IO feed data state
+  const [feedData, setFeedData] = useState({
+    temperature: { value: null, lastUpdated: null, loading: true, error: null },
+    humidity: { value: null, lastUpdated: null, loading: true, error: null },
+    'soil-moisture': { value: null, lastUpdated: null, loading: true, error: null }
+  });
 
   useEffect(() => {
     // Load p5.js from CDN
@@ -387,6 +399,63 @@ export default function SpeciesGameUI() {
     };
   }, []);
 
+  // Fetch Adafruit IO feed data
+  useEffect(() => {
+    const feedKeys = ['temperature', 'humidity', 'soil-moisture'];
+
+    const fetchFeedData = async (feedKey) => {
+      try {
+        const headers = {};
+        if (ADAFRUIT_IO_KEY) {
+          headers['X-AIO-Key'] = ADAFRUIT_IO_KEY;
+        }
+
+        const response = await fetch(
+          `${ADAFRUIT_IO_URL}/${ADAFRUIT_USERNAME}/feeds/${feedKey}/data/last`,
+          { headers }
+        );
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch ${feedKey}: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        setFeedData(prev => ({
+          ...prev,
+          [feedKey]: {
+            value: parseFloat(data.value),
+            lastUpdated: new Date(data.created_at),
+            loading: false,
+            error: null
+          }
+        }));
+      } catch (error) {
+        console.error(`Error fetching ${feedKey}:`, error);
+        setFeedData(prev => ({
+          ...prev,
+          [feedKey]: {
+            ...prev[feedKey],
+            loading: false,
+            error: error.message
+          }
+        }));
+      }
+    };
+
+    const fetchAllFeeds = () => {
+      feedKeys.forEach(feedKey => fetchFeedData(feedKey));
+    };
+
+    // Initial fetch
+    fetchAllFeeds();
+
+    // Refresh every 30 seconds
+    const intervalId = setInterval(fetchAllFeeds, 30000);
+
+    return () => clearInterval(intervalId);
+  }, []);
+
   const species = [
     { name: 'Bacteria', icon: '🦠', description: 'Microscopic organisms that play crucial roles in decomposition and nutrient cycling.' },
     { name: 'Fungi', icon: '🍄', description: 'Thrives in moist, dark environments with neutral pH levels.' },
@@ -422,11 +491,30 @@ export default function SpeciesGameUI() {
   ];
 
   const liveDataTabs = [
-    { id: 'sound', label: 'Sound' },
-    { id: 'temperature', label: 'Temperature' },
-    { id: 'humidity', label: 'Humidity' },
-    { id: 'soil-moisture', label: 'Soil Moisture' }
+    { id: 'temperature', label: 'Temperature', unit: '°C', icon: '🌡️' },
+    { id: 'humidity', label: 'Humidity', unit: '%', icon: '💧' },
+    { id: 'soil-moisture', label: 'Soil Moisture', unit: '%', icon: '🌱' }
   ];
+
+  // Helper function to format the last updated time
+  const formatLastUpdated = (date) => {
+    if (!date) return '';
+    const now = new Date();
+    const diffMs = now - date;
+    const diffSecs = Math.floor(diffMs / 1000);
+    const diffMins = Math.floor(diffSecs / 60);
+    const diffHours = Math.floor(diffMins / 60);
+
+    if (diffSecs < 60) return 'Just now';
+    if (diffMins < 60) return `${diffMins}m ago`;
+    if (diffHours < 24) return `${diffHours}h ago`;
+    return date.toLocaleDateString();
+  };
+
+  // Get current tab info
+  const getCurrentTabInfo = () => {
+    return liveDataTabs.find(tab => tab.id === activeLiveData) || liveDataTabs[0];
+  };
 
   return (
     <div className="flex h-screen bg-neutral-900 text-white relative">
@@ -721,8 +809,39 @@ export default function SpeciesGameUI() {
             ))}
           </div>
 
-          <div className="bg-neutral-800 h-36 flex items-center justify-center rounded">
-            <span className="text-xl text-neutral-400 capitalize">{activeLiveData.replace('-', ' ')}</span>
+          <div className="bg-neutral-800 h-36 rounded p-4">
+            {feedData[activeLiveData]?.loading ? (
+              <div className="h-full flex flex-col items-center justify-center">
+                <div className="animate-pulse text-neutral-400">Loading...</div>
+              </div>
+            ) : feedData[activeLiveData]?.error ? (
+              <div className="h-full flex flex-col items-center justify-center">
+                <span className="text-red-400 text-sm">Error loading data</span>
+                <span className="text-neutral-500 text-xs mt-1">{feedData[activeLiveData].error}</span>
+              </div>
+            ) : (
+              <div className="h-full flex flex-col justify-between">
+                <div className="flex items-center justify-between">
+                  <span className="text-neutral-400 text-sm">{getCurrentTabInfo().label}</span>
+                  <span className="text-neutral-500 text-xs">
+                    {formatLastUpdated(feedData[activeLiveData]?.lastUpdated)}
+                  </span>
+                </div>
+                <div className="flex items-center justify-center flex-1">
+                  <span className="text-5xl font-bold text-white">
+                    {feedData[activeLiveData]?.value?.toFixed(1) ?? '--'}
+                  </span>
+                  <span className="text-2xl text-neutral-400 ml-2">
+                    {getCurrentTabInfo().unit}
+                  </span>
+                </div>
+                <div className="flex items-center justify-center">
+                  <span className="text-neutral-500 text-xs">
+                    Data from Adafruit IO - Auto-refreshes every 30s
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
