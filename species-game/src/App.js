@@ -672,7 +672,7 @@ export default function SpeciesGameUI() {
                   src={selectedOrganism.image}
                   alt={selectedOrganism.name}
                   className="rounded-lg object-contain"
-                  style={{ width: '350px', height: 'auto' }}
+                  style={{ width: '400px', height: 'auto' }}
                 />
               </div>
             ) : (
