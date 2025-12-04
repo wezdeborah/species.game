@@ -656,7 +656,7 @@ export default function SpeciesGameUI() {
       {/* Organism Card Modal */}
       {selectedOrganism && (
         <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className={`bg-neutral-800 rounded-lg w-full border-2 border-neutral-600 ${selectedOrganism.image ? 'p-2 mx-2' : 'p-8 mx-4 max-w-2xl'}`}>
+          <div className={`bg-neutral-800 rounded-lg w-full border-2 border-neutral-600 ${selectedOrganism.image ? 'p-2 mx-10' : 'p-8 mx-4 max-w-2xl'}`}>
             {selectedOrganism.image ? (
               // Card layout with centered image at 300px height
               <div className="flex flex-col items-center">
