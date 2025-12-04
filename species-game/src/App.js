@@ -11,6 +11,7 @@ export default function SpeciesGameUI() {
   const [activeLiveData, setActiveLiveData] = useState('temperature');
   const [selectedSpecies, setSelectedSpecies] = useState(null);
   const [selectedOrganism, setSelectedOrganism] = useState(null);
+  const [showCards, setShowCards] = useState(false);
 
   // Adafruit IO feed data state
   const [feedData, setFeedData] = useState({
@@ -385,31 +386,42 @@ export default function SpeciesGameUI() {
           </div>
 
           {activeTab === 'species-cards' && (
-            <div className="mb-8 overflow-x-auto">
-              <div className="flex items-center justify-center gap-4">
-                {organisms.map((org, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setSelectedOrganism(org)}
-                    className="flex-shrink-0 bg-neutral-800 hover:bg-neutral-700 rounded-lg overflow-hidden transition-colors border border-neutral-700 hover:border-neutral-500"
-                    style={{ height: '300px', width: 'auto' }}
-                  >
-                    {org.image ? (
-                      <img
-                        src={org.image}
-                        alt={org.name}
-                        className="h-full w-auto object-contain"
-                        style={{ height: '300px' }}
-                      />
-                    ) : (
-                      <div className="h-full w-40 flex flex-col items-center justify-center p-4">
-                        <div className="font-medium text-center">{org.name}</div>
-                        <div className="text-xs text-neutral-500 mt-1">{org.type}</div>
-                      </div>
-                    )}
-                  </button>
-                ))}
-              </div>
+            <div className="mb-8">
+              <button
+                onClick={() => setShowCards(!showCards)}
+                className="w-full bg-neutral-700 hover:bg-neutral-600 text-white py-3 px-4 rounded transition-colors mb-4"
+              >
+                {showCards ? 'Hide Species Cards' : 'Show Species Cards'}
+              </button>
+
+              {showCards && (
+                <div className="overflow-x-auto">
+                  <div className="flex items-center justify-center gap-0">
+                    {organisms.map((org, i) => (
+                      <button
+                        key={i}
+                        onClick={() => setSelectedOrganism(org)}
+                        className="flex-shrink-0 bg-neutral-800 hover:bg-neutral-700 overflow-hidden transition-colors border border-neutral-700 hover:border-neutral-500"
+                        style={{ width: '400px', margin: '0' }}
+                      >
+                        {org.image ? (
+                          <img
+                            src={org.image}
+                            alt={org.name}
+                            className="w-full object-contain"
+                            style={{ width: '400px', margin: '0' }}
+                          />
+                        ) : (
+                          <div className="w-full flex flex-col items-center justify-center p-4">
+                            <div className="font-medium text-center">{org.name}</div>
+                            <div className="text-xs text-neutral-500 mt-1">{org.type}</div>
+                          </div>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
