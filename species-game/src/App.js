@@ -419,7 +419,7 @@ export default function SpeciesGameUI() {
         }
 
         const response = await fetch(
-          `${ADAFRUIT_IO_URL}/${ADAFRUIT_USERNAME}/feeds/${feedKey}/data/last`,
+          `${ADAFRUIT_IO_URL}/${ADAFRUIT_USERNAME}/feeds/${feedKey}/data?limit=1`,
           { headers }
         );
 
@@ -427,7 +427,13 @@ export default function SpeciesGameUI() {
           throw new Error(`Failed to fetch ${feedKey}: ${response.status}`);
         }
 
-        const data = await response.json();
+        const dataArray = await response.json();
+
+        if (dataArray.length === 0) {
+          throw new Error(`No data available for ${feedKey}`);
+        }
+
+        const data = dataArray[0];
 
         setFeedData(prev => ({
           ...prev,
