@@ -363,6 +363,13 @@ export default function SpeciesGameUI() {
             
             return p.max(0, (tempCondition + humidityCondition + pHCondition) / 3);
           }
+
+            p.updateEnvironment = (newTemp, newHumidity, newPH) => {
+              environment.temperature = newTemp;
+              environment.humidity = newHumidity;
+              environment.pH = newPH;
+            };
+ 
           
           function resetGame() {
             creatures = [];
@@ -397,6 +404,7 @@ export default function SpeciesGameUI() {
         p5InstanceRef.current = null;
       }
     };
+    
   }, []);
 
   // Fetch Adafruit IO feed data
@@ -455,6 +463,11 @@ export default function SpeciesGameUI() {
 
     return () => clearInterval(intervalId);
   }, []);
+  useEffect(() => {
+    if (p5InstanceRef.current && p5InstanceRef.current.updateEnvironment) {
+      p5InstanceRef.current.updateEnvironment(temp, humi, pH);
+    }
+  }, [pH, temp, humi]);
 
   const species = [
     { name: 'Bacteria', icon: '🦠', description: 'Microscopic organisms that play crucial roles in decomposition and nutrient cycling.' },
@@ -517,7 +530,7 @@ export default function SpeciesGameUI() {
   };
 
   return (
-    <div className="flex h-screen bg-neutral-900 text-white relative">
+    <div className="flex h-screen w-full bg-neutral-900 text-white relative overflow-hidden m-0 p-0 gap-0">
       {/* Organism Card Modal */}
       {selectedOrganism && (
         <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -647,13 +660,13 @@ export default function SpeciesGameUI() {
       )}
 
       {/* Left Panel */}
-      <div className="w-1/2 p-8 flex flex-col overflow-hidden">
+      <div className="w-2/6 p-6 flex flex-col overflow-hidden">
         {/* Scrollable Content Area */}
-        <div className="flex-1 overflow-y-auto pr-2 pb-4">
+        <div className="flex-2 overflow-y-auto pr-2 pb-4">
           {/* Species Section */}
           <div className="mb-8">
             <h2 className="text-2xl font-bold mb-4">Species</h2>
-            <div className="flex gap-6">
+            <div className="flex gap-4">
               {species.map((s, i) => (
                 <button
                   key={i}
@@ -687,9 +700,9 @@ export default function SpeciesGameUI() {
           {/* Parameters Section */}
           {activeTab === 'parameters' && (
             <div className="border border-neutral-700 p-4 mb-6">
-              <div className="flex gap-8 items-end h-48">
+              <div className="flex flex-col gap-8 items-centre h-48 overflow-hidden" >
                 {/* pH Bar */}
-                <div className="flex flex-col items-center flex-1">
+                <div className="flex flex-row items-centre flex-1 gap-2">
                   <span className="text-lg mb-2">pH</span>
                   <div className="w-full bg-neutral-700 rounded relative flex-1">
                     <div
@@ -710,7 +723,7 @@ export default function SpeciesGameUI() {
                 </div>
 
                 {/* Temperature Bar */}
-                <div className="flex flex-col items-center flex-1">
+                <div className="flex flex-row items-center flex-1 gap-2">
                   <span className="text-lg mb-2">Temp</span>
                   <div className="w-full bg-neutral-700 rounded relative flex-1">
                     <div
@@ -730,7 +743,7 @@ export default function SpeciesGameUI() {
                 </div>
 
                 {/* Humidity Bar */}
-                <div className="flex flex-col items-center flex-1">
+                <div className="flex flex-row items-center flex-1 gap-2">
                   <span className="text-lg mb-2">Humi</span>
                   <div className="w-full bg-neutral-700 rounded relative flex-1">
                     <div
@@ -772,7 +785,7 @@ export default function SpeciesGameUI() {
           {activeTab === 'how-to-play' && (
             <div className="mb-6 text-neutral-400 space-y-4 overflow-y-auto max-h-48 pr-2">
               <p>
-                Welcome to the Species Simulation Game! In this game, you'll manage environmental 
+                In this game, you'll manage environmental 
                 parameters to create optimal conditions for various organisms to thrive.
               </p>
               <p>
@@ -781,15 +794,14 @@ export default function SpeciesGameUI() {
               </p>
               <p>
                 Explore different species and organisms by clicking on them to learn more about their 
-                characteristics and optimal living conditions. Monitor the Live Data section to track 
-                your ecosystem's health over time.
+                characteristics and optimal living conditions. 
               </p>
             </div>
           )}
         </div>
 
         {/* Fixed Live Data Section */}
-        <div className="mt-auto pt-4 border-t border-neutral-800">
+        <div className="mt-1 pt-4 border-t border-neutral-800">
           <h3 className="text-xl font-bold mb-3">Live Data</h3>
           
           {/* Live Data Navigation */}
@@ -847,7 +859,7 @@ export default function SpeciesGameUI() {
       </div>
 
       {/* Right Panel */}
-      <div className="w-1/2 bg-neutral-200 flex items-center justify-center">
+      <div className="w-4/6 bg-neutral-200 flex items-center justify-center">
         <div ref={p5ContainerRef} className="w-full h-full"></div>
       </div>
     </div>
