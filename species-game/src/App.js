@@ -573,7 +573,7 @@ export default function SpeciesGameUI() {
       name: 'Procris repens',
       type: 'Plant',
       description: 'Creeping herbaceous plant found in tropical regions.',
-      image: '/cards/Procris-Repens.png'
+      image: '/cards/Procris-repens.png'
     }
   ];
 
@@ -733,7 +733,7 @@ export default function SpeciesGameUI() {
       {/* Species Card Modal */}
       {selectedSpecies && (
         <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-neutral-800 rounded-lg p-8 max-w-md w-full mx-4 border-2 border-neutral-600">
+          <div className="bg-neutral-800 rounded-lg p-8 max-w-md w-xs mx-4 border-2 border-neutral-600">
             <div className="flex justify-between items-start mb-6">
               <div className="flex items-center gap-4">
                 <span className="text-6xl">{selectedSpecies.icon}</span>
