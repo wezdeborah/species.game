@@ -616,9 +616,9 @@ export default function SpeciesGameUI() {
         <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-neutral-800 rounded-lg p-8 max-w-2xl w-full mx-4 border-2 border-neutral-600">
             {selectedOrganism.image ? (
-              // Special card layout for Procris repens with image
-              <div>
-                <div className="flex justify-end mb-2">
+              // Card layout with centered image at 300px height
+              <div className="flex flex-col items-center">
+                <div className="w-full flex justify-end mb-2">
                   <button
                     onClick={() => setSelectedOrganism(null)}
                     className="text-neutral-400 hover:text-white text-2xl"
@@ -626,10 +626,11 @@ export default function SpeciesGameUI() {
                     ×
                   </button>
                 </div>
-                <img 
-                  src={selectedOrganism.image} 
+                <img
+                  src={selectedOrganism.image}
                   alt={selectedOrganism.name}
-                  className="w-full rounded-lg"
+                  className="rounded-lg object-contain"
+                  style={{ height: '300px', width: 'auto' }}
                 />
               </div>
             ) : (
@@ -778,28 +779,16 @@ export default function SpeciesGameUI() {
           </div>
 
           {activeTab === 'species-cards' && (
-            <div className="mb-8 overflow-x-auto">
-              <div className="flex items-center justify-center gap-4">
+            <div className="mb-8 overflow-y-auto max-h-96">
+              <div className="grid grid-cols-3 gap-2">
                 {organisms.map((org, i) => (
                   <button
                     key={i}
                     onClick={() => setSelectedOrganism(org)}
-                    className="flex-shrink-0 bg-neutral-800 hover:bg-neutral-700 rounded-lg overflow-hidden transition-colors border border-neutral-700 hover:border-neutral-500"
-                    style={{ height: '300px', width: 'auto' }}
+                    className="bg-neutral-800 hover:bg-neutral-700 px-3 py-2 rounded text-sm text-left transition-colors border border-neutral-700 hover:border-neutral-600"
                   >
-                    {org.image ? (
-                      <img
-                        src={org.image}
-                        alt={org.name}
-                        className="h-full w-auto object-contain"
-                        style={{ height: '300px' }}
-                      />
-                    ) : (
-                      <div className="h-full w-40 flex flex-col items-center justify-center p-4">
-                        <div className="font-medium text-center">{org.name}</div>
-                        <div className="text-xs text-neutral-500 mt-1">{org.type}</div>
-                      </div>
-                    )}
+                    <div className="font-medium">{org.name}</div>
+                    <div className="text-xs text-neutral-500">{org.type}</div>
                   </button>
                 ))}
               </div>
