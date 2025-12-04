@@ -157,13 +157,8 @@ export default function SpeciesGameUI() {
             display() {
               p.push();
               p.translate(this.x, this.y);
-              p.rotate(this.angle);
-
-              let visualSize = this.size * (this.energy / 150);
-              let alphaValue = p.map(this.energy, 0, 150, 100, 255);
 
               p.imageMode(p.CENTER);
-              p.tint(255, alphaValue);
 
               let img;
               if (this.type >= SPECIES.ACIDOBACTERIA && this.type <= SPECIES.STREPTOMYCES) {
@@ -177,9 +172,8 @@ export default function SpeciesGameUI() {
               }
 
               if (img) {
-                p.image(img, 0, 0, visualSize, visualSize);
+                p.image(img, 0, 0, this.size, this.size);
               }
-              p.noTint();
               p.pop();
             }
           }
